@@ -1,7 +1,8 @@
-<!DOCTYPE html><html lang="pt-BR">
+<!DOCTYPE html>
+<html lang="pt-BR">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>Tigrinho Estilo Fortune Tiger</title>
   <style>
     body {
@@ -64,28 +65,49 @@
       gap: 20px;
       flex-wrap: wrap;
     }
+    #loja {
+      background: #fffde7;
+      border: 2px solid #ffc107;
+      margin: 20px auto;
+      padding: 15px;
+      width: 300px;
+      border-radius: 10px;
+    }
   </style>
 </head>
 <body>
-  <h1 style="color:#e65100;">Jogo Estilo Tigrinho</h1>  <div class="slot-machine">
+  <h1 style="color:#e65100;">Jogo Estilo Tigrinho</h1>
+  <div class="slot-machine">
     <div class="reels">
       <div class="reel" id="reel1">❓</div>
       <div class="reel" id="reel2">❓</div>
       <div class="reel" id="reel3">❓</div>
     </div>
     <div class="status" id="mensagem">Clique em Girar</div>
-  </div>  <div class="controls">
+  </div>
+
+  <div class="controls">
     <div class="painel">
       <div>Saldo: <span id="saldo">R$ 10,00</span></div>
       <div>Aposta: R$ <input type="number" id="aposta" value="0.50" step="0.10" min="0.10" style="width: 70px;"></div>
       <div>Ganho: <span id="ganho">R$ 0,00</span></div>
-    </div><div class="painel">
-  <button class="button" onclick="girar()">Girar</button>
-  <button class="button" onclick="turbo()">Turbo</button>
-  <button class="button" onclick="modoAuto()">Auto</button>
-</div>
+    </div>
+    <div class="painel">
+      <button class="button" onclick="girar()">Girar</button>
+      <button class="button" onclick="turbo()">Turbo</button>
+      <button class="button" onclick="modoAuto()">Auto</button>
+      <button class="button" onclick="abrirLoja()">Loja</button>
+    </div>
+  </div>
 
-  </div>  <script>
+  <div id="loja" style="display:none;">
+    <p><strong>Loja de Prêmios</strong></p>
+    <p>Seu saldo: <span id="saldoLoja">R$ 0,00</span></p>
+    <button class="button" onclick="comprarGift()">Gift Card de R$10 (R$1000)</button>
+    <p id="msgLoja"></p>
+  </div>
+
+  <script>
     let saldo = parseFloat(localStorage.getItem('saldo')) || 10;
     let auto = false;
     const simbolos = ['🐯', '🍒', '💎', '🔔', '7️⃣'];
@@ -152,6 +174,25 @@
       }
     }
 
+    function abrirLoja() {
+      document.getElementById("loja").style.display = "block";
+      document.getElementById("saldoLoja").innerText = `R$ ${saldo.toFixed(2)}`;
+      document.getElementById("msgLoja").innerText = "";
+    }
+
+    function comprarGift() {
+      if (saldo >= 1000) {
+        saldo -= 1000;
+        atualizarInterface();
+        document.getElementById("saldoLoja").innerText = `R$ ${saldo.toFixed(2)}`;
+        document.getElementById("msgLoja").innerText = "Parabéns! Você comprou um Gift Card de R$10!";
+        localStorage.setItem('saldo', saldo);
+      } else {
+        document.getElementById("msgLoja").innerText = "Saldo insuficiente para comprar o Gift Card.";
+      }
+    }
+
     atualizarInterface();
-  </script></body>
+  </script>
+</body>
 </html>
