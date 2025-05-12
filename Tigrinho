@@ -1,0 +1,130 @@
+<!DOCTYPE html><html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Tigrinho Clone</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background: linear-gradient(to bottom, #fff3e0, #ffe0b2);
+      text-align: center;
+      padding: 40px;
+    }
+    h1 {
+      color: #e65100;
+    }
+    #slot {
+      font-size: 60px;
+      margin: 30px auto;
+      display: flex;
+      justify-content: center;
+      gap: 20px;
+    }
+    .reel {
+      width: 80px;
+      height: 80px;
+      background: white;
+      border: 3px solid #e65100;
+      border-radius: 10px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    button {
+      padding: 15px 30px;
+      font-size: 18px;
+      background: #e65100;
+      color: white;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+      margin: 10px;
+    }
+    #resultado, #saldo {
+      margin-top: 20px;
+      font-size: 20px;
+      font-weight: bold;
+    }
+    #painel {
+      margin-top: 30px;
+    }
+    input[type="number"] {
+      padding: 5px;
+      font-size: 16px;
+      width: 100px;
+    }
+  </style>
+</head>
+<body>
+  <h1>Tigrinho Clone - Teste</h1>
+  <div id="saldo">Saldo: R$ 10,00</div>
+  <div id="slot">
+    <div class="reel" id="r1">❓</div>
+    <div class="reel" id="r2">❓</div>
+    <div class="reel" id="r3">❓</div>
+  </div>
+  <button onclick="girar()">Girar - R$ 1,00</button>
+  <div id="resultado"></div>  <div id="painel">
+    <h2>Simular Depósito/Saque</h2>
+    <input type="number" id="valor" placeholder="Valor" />
+    <button onclick="depositar()">Depositar</button>
+    <button onclick="sacar()">Sacar</button>
+  </div>  <script>
+    let saldo = parseFloat(localStorage.getItem("saldo")) || 10;
+    const simbolos = ["🐯", "🍒", "💎", "🍀", "7️⃣"];
+    const precoGiro = 1;
+    const premio = 5;
+
+    function atualizarSaldo() {
+      document.getElementById("saldo").innerText = `Saldo: R$ ${saldo.toFixed(2)}`;
+      localStorage.setItem("saldo", saldo);
+    }
+
+    function girar() {
+      if (saldo < precoGiro) {
+        document.getElementById("resultado").innerText = "Saldo insuficiente!";
+        return;
+      }
+
+      saldo -= precoGiro;
+      const r1 = simbolos[Math.floor(Math.random() * simbolos.length)];
+      const r2 = simbolos[Math.floor(Math.random() * simbolos.length)];
+      const r3 = simbolos[Math.floor(Math.random() * simbolos.length)];
+
+      document.getElementById("r1").innerText = r1;
+      document.getElementById("r2").innerText = r2;
+      document.getElementById("r3").innerText = r3;
+
+      if (r1 === r2 && r2 === r3) {
+        saldo += premio;
+        document.getElementById("resultado").innerText = `Jackpot! Ganhou R$ ${premio.toFixed(2)}!`;
+      } else {
+        document.getElementById("resultado").innerText = "Tente novamente!";
+      }
+
+      atualizarSaldo();
+    }
+
+    function depositar() {
+      const valor = parseFloat(document.getElementById("valor").value);
+      if (!isNaN(valor) && valor > 0) {
+        saldo += valor;
+        atualizarSaldo();
+        document.getElementById("resultado").innerText = `Depositado R$ ${valor.toFixed(2)}`;
+      }
+    }
+
+    function sacar() {
+      const valor = parseFloat(document.getElementById("valor").value);
+      if (!isNaN(valor) && valor > 0 && valor <= saldo) {
+        saldo -= valor;
+        atualizarSaldo();
+        document.getElementById("resultado").innerText = `Sacado R$ ${valor.toFixed(2)}`;
+      } else {
+        document.getElementById("resultado").innerText = "Valor inválido ou saldo insuficiente.";
+      }
+    }
+
+    atualizarSaldo();
+  </script></body>
+</html>
