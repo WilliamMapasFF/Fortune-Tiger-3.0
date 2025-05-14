@@ -94,7 +94,6 @@
     </div>
     <div class="painel">
       <button class="button" onclick="girar()">Girar</button>
-      <button class="button" onclick="depositar()">Depositar R$10</button>
   <input type="number" id="qtdeTurbo" placeholder="Qtd giros turbo" style="width: 120px; padding: 5px;">
       <button class="button" onclick="turbo()">Turbo</button>
       <button class="button" onclick="modoAuto()">Auto</button>
@@ -108,6 +107,12 @@
     <p>Seu saldo: <span id="saldoLoja">R$ 0,00</span></p>
     <button class="button" onclick="comprarGift()">Gift Card de R$10 (R$1000)</button>
     <p id="msgLoja"></p>
+  </div>
+
+  <div style="margin-top: 10px;">
+  <label>Depositar: R$</label>
+  <input type="number" id="inputDeposito" value="10.00" step="0.01" min="0">
+  <button class="button" onclick="depositarValor()">OK</button>
   </div>
   
   <script>
@@ -214,19 +219,22 @@ function turbo() {
         girar();
         setTimeout(autoGirar, 1000);
 
-        function depositar() {
-  if (saldo >= 10) {
-    alert('Saldo máximo é R$10!');
+        function depositarValor() {
+  const valor = parseFloat(document.getElementById('inputDeposito').value);
+  if (isNaN(valor) || valor <= 0) {
+    alert('Digite um valor válido para depósito.');
     return;
   }
-  const restante = 10 - saldo;
-  saldo += restante;
+  if (saldo + valor > 10) {
+    alert('Você só pode ter no máximo R$10 de saldo.');
+    return;
+  }
+  saldo += valor;
   atualizarInterface();
-  document.getElementById('status').innerText = 'Vc depositou 10 Reais!';
+  document.getElementById('status').innerText = `Depositado R$${valor.toFixed(2)} com sucesso!`;
+  localStorage.setItem('saldo', saldo);
         }
         
-      }
-    }
    function zerarSaldo() {
   saldo = 0;
   atualizarInterface();
