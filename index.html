@@ -86,6 +86,8 @@
     <div class="status" id="mensagem">Clique em Girar</div>
   </div>
 
+  <div id="status" class="status"></div>
+
   <div class="controls">
     <div class="painel">
       <div>Saldo: <span id="saldo">R$ 10,00</span></div>
@@ -94,11 +96,10 @@
     </div>
     <div class="painel">
       <button class="button" onclick="girar()">Girar</button>
-      style="margin-top: 10px;">
-  <label>Depositar: R$</label>
-  <input type="number" id="inputDeposito" value="10.00" step="0.01" min="0">
-  <button class="button" onclick="depositar()">OK</button>
-  <input type="number" id="qtdeTurbo" placeholder="Qtd giros turbo" style="width: 120px; padding: 5px;">
+      <label>Depositar: R$</label>
+      <input type="number" id="inputDeposito" value="10.00" step="0.01" min="0">
+      <button class="button" onclick="depositar()">OK</button>
+      <input type="number" id="qtdeTurbo" placeholder="Qtd giros turbo" style="width: 120px; padding: 5px;">
       <button class="button" onclick="turbo()">Turbo</button>
       <button class="button" onclick="modoAuto()">Auto</button>
       <button class="button" onclick="abrirLoja()">Loja</button>
@@ -156,50 +157,83 @@
       localStorage.setItem('saldo', saldo);
     }
 
-    let turboAtivo = false;
-let intervaloTurbo;
-let girosRestantes = 0;
-
-function turbo() {
-  const qtdeInput = parseInt(document.getElementById('qtdeTurbo').value);
-
-  if (!turboAtivo) {
-    turboAtivo = true;
-
-    if (!isNaN(qtdeInput) && qtdeInput > 0) {
-      // Turbo com número fixo de giros
-      girosRestantes = qtdeInput;
-      document.getElementById('mensagem').innerText = `Turbo: ${girosRestantes} giros`;
-
-      intervaloTurbo = setInterval(() => {
-        if (girosRestantes > 0 && saldo > 0) {
-          girar();
-          girosRestantes--;
-        } else {
-          clearInterval(intervaloTurbo);
-          turboAtivo = false;
-          document.getElementById('mensagem').innerText = 'Turbo finalizado';
-        }
-      }, 300);
-    } else {
-      // Turbo infinito
-      document.getElementById('mensagem').innerText = 'Turbo contínuo ativado';
-      intervaloTurbo = setInterval(() => {
-        if (saldo > 0) {
-          girar();
-        } else {
-          turbo(); // desativa se saldo zerar
-        }
-      }, 300);
+    function depositar() {
+      const valor = parseFloat(document.getElementById('inputDeposito').value);
+      if (!isNaN(valor) && valor > 0) {
+        saldo += valor;
+        atualizarInterface();
+        document.getElementById('status').innerText = `Depositado R$ ${valor.toFixed(2)} com sucesso!`;
+        localStorage.setItem('saldo', saldo);
+      } else {
+        document.getElementById('status').innerText = `Valor inválido para depósito.`;
+      }
     }
 
-  } else {
-    // Parar o turbo
-    turboAtivo = false;
-    clearInterval(intervaloTurbo);
-    document.getElementById('mensagem').innerText = 'Turbo desativado';
-  }
-}
+    function zerarSaldo() {
+      saldo = 0;
+      atualizarInterface();
+      document.getElementById('status').innerText = 'Saldo zerado!';
+      localStorage.setItem('saldo', saldo);
+    }
+
+    function abrirLoja() {
+      document.getElementById("loja").style.display = "block";
+      document.getElementById("saldoLoja").innerText = `R$ ${saldo.toFixed(2)}`;
+      document.getElementById("msgLoja").innerText = "";
+    }
+
+    function comprarGift() {
+      if (saldo >= 1000) {
+        saldo -= 1000;
+        atualizarInterface();
+        document.getElementById("saldoLoja").innerText = `R$ ${saldo.toFixed(2)}`;
+        document.getElementById("msgLoja").innerText = "Parabéns! Você comprou um Gift Card de R$10!";
+        localStorage.setItem('saldo', saldo);
+      } else {
+        document.getElementById("msgLoja").innerText = "Saldo insuficiente para comprar o Gift Card.";
+      }
+    }
+
+    let turboAtivo = false;
+    let intervaloTurbo;
+    let girosRestantes = 0;
+
+    function turbo() {
+      const qtdeInput = parseInt(document.getElementById('qtdeTurbo').value);
+
+      if (!turboAtivo) {
+        turboAtivo = true;
+
+        if (!isNaN(qtdeInput) && qtdeInput > 0) {
+          girosRestantes = qtdeInput;
+          document.getElementById('mensagem').innerText = `Turbo: ${girosRestantes} giros`;
+
+          intervaloTurbo = setInterval(() => {
+            if (girosRestantes > 0 && saldo > 0) {
+              girar();
+              girosRestantes--;
+            } else {
+              clearInterval(intervaloTurbo);
+              turboAtivo = false;
+              document.getElementById('mensagem').innerText = 'Turbo finalizado';
+            }
+          }, 300);
+        } else {
+          document.getElementById('mensagem').innerText = 'Turbo contínuo ativado';
+          intervaloTurbo = setInterval(() => {
+            if (saldo > 0) {
+              girar();
+            } else {
+              turbo();
+            }
+          }, 300);
+        }
+      } else {
+        turboAtivo = false;
+        clearInterval(intervaloTurbo);
+        document.getElementById('mensagem').innerText = 'Turbo desativado';
+      }
+    }
 
     function modoAuto() {
       if (!auto) {
@@ -216,41 +250,6 @@ function turbo() {
       if (auto && saldo > 0) {
         girar();
         setTimeout(autoGirar, 1000);
-
-        function depositarValor() {
-  saldo += 10;
-  atualizarInterface();
-  document.getElementById('status').innerText = 'Depositado R$10 com sucesso!';
-  localStorage.setItem('saldo', saldo);
-        }
-  saldo += valor;
-  atualizarInterface();
-  document.getElementById('status').innerText = `Depositado R$10${valor.toFixed(2)} com sucesso!`;
-  localStorage.setItem('saldo', saldo);
-        }
-        
-   function zerarSaldo() {
-  saldo = 0;
-  atualizarInterface();
-  document.getElementById('status').innerText = 'Saldo zerado!';
-  localStorage.setItem('saldo', saldo);
-}
-    
-    function abrirLoja() {
-      document.getElementById("loja").style.display = "block";
-      document.getElementById("saldoLoja").innerText = `R$ ${saldo.toFixed(2)}`;
-      document.getElementById("msgLoja").innerText = "";
-    }
-
-    function comprarGift() {
-      if (saldo >= 1000) {
-        saldo -= 1000;
-        atualizarInterface();
-        document.getElementById("saldoLoja").innerText = `R$ ${saldo.toFixed(2)}`;
-        document.getElementById("msgLoja").innerText = "Parabéns! Você comprou um Gift Card de R$10!";
-        localStorage.setItem('saldo', saldo);
-      } else {
-        document.getElementById("msgLoja").innerText = "Saldo insuficiente para comprar o Gift Card.";
       }
     }
 
