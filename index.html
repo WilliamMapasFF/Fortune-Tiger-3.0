@@ -94,6 +94,7 @@
     </div>
     <div class="painel">
       <button class="button" onclick="girar()">Girar</button>
+  <input type="number" id="qtdeTurbo" placeholder="Qtd giros turbo" style="width: 120px; padding: 5px;">
       <button class="button" onclick="turbo()">Turbo</button>
       <button class="button" onclick="modoAuto()">Auto</button>
       <button class="button" onclick="abrirLoja()">Loja</button>
@@ -107,12 +108,7 @@
     <p id="msgLoja"></p>
   </div>
   <!-- Adicione este botão na área .painel logo após os outros botões -->
-<button class="button" onclick="depositar()">Depositar R$10</button>
-
-  <div class="painel">
-  <input type="number" id="qtdeTurbo" placeholder="Qtd giros turbo" style="width: 120px; padding: 5px;">
-  <button class="button" onclick="turbo()">Turbo</button>
-  </div>
+<button class="button" onclick="depositar()">Depositar R$10</butt
 
   <script>
     let saldo = parseFloat(localStorage.getItem('saldo')) || 10;
@@ -219,14 +215,14 @@ function turbo() {
         setTimeout(autoGirar, 1000);
 
         function depositar() {
-  if (saldo < 10) {
-    saldo = 10;
-    atualizarInterface();
-    localStorage.setItem('saldo', saldo);
-    document.getElementById('mensagem').innerText = 'Depósito de R$10 realizado com sucesso!';
-  } else {
-    document.getElementById('mensagem').innerText = 'Você já tem R$10 ou mais!';
+  if (saldo >= 10) {
+    alert('Saldo máximo é R$10!');
+    return;
   }
+  const restante = 10 - saldo;
+  saldo += restante;
+  atualizarInterface();
+  document.getElementById('status').innerText = 'Vc depositou 10 Reais!';
         }
         
       }
