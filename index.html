@@ -94,10 +94,12 @@
     </div>
     <div class="painel">
       <button class="button" onclick="girar()">Girar</button>
+      <button class="button" onclick="depositar()">Depositar R$10</button>
   <input type="number" id="qtdeTurbo" placeholder="Qtd giros turbo" style="width: 120px; padding: 5px;">
       <button class="button" onclick="turbo()">Turbo</button>
       <button class="button" onclick="modoAuto()">Auto</button>
       <button class="button" onclick="abrirLoja()">Loja</button>
+      <button class="button" onclick="zerarSaldo()">Zerar Saldo</button>
     </div>
   </div>
 
@@ -107,9 +109,7 @@
     <button class="button" onclick="comprarGift()">Gift Card de R$10 (R$1000)</button>
     <p id="msgLoja"></p>
   </div>
-  <!-- Adicione este botão na área .painel logo após os outros botões -->
-<button class="button" onclick="depositar()">Depositar R$10</button>
-
+  
   <script>
     let saldo = parseFloat(localStorage.getItem('saldo')) || 10;
     let auto = false;
@@ -227,7 +227,13 @@ function turbo() {
         
       }
     }
-
+   function zerarSaldo() {
+  saldo = 0;
+  atualizarInterface();
+  document.getElementById('status').innerText = 'Saldo zerado!';
+  localStorage.setItem('saldo', saldo);
+}
+    
     function abrirLoja() {
       document.getElementById("loja").style.display = "block";
       document.getElementById("saldoLoja").innerText = `R$ ${saldo.toFixed(2)}`;
