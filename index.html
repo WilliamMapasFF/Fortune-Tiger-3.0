@@ -106,6 +106,13 @@
     <button class="button" onclick="comprarGift()">Gift Card de R$10 (R$1000)</button>
     <p id="msgLoja"></p>
   </div>
+  <!-- Adicione este botão na área .painel logo após os outros botões -->
+<button class="button" onclick="depositar()">Depositar R$10</button>
+
+  <div class="painel">
+  <input type="number" id="qtdeTurbo" placeholder="Qtd giros turbo" style="width: 120px; padding: 5px;">
+  <button class="button" onclick="turbo()">Turbo</button>
+  </div>
 
   <script>
     let saldo = parseFloat(localStorage.getItem('saldo')) || 10;
@@ -150,11 +157,50 @@
       localStorage.setItem('saldo', saldo);
     }
 
-    function turbo() {
-      girar();
-      setTimeout(girar, 400);
-      setTimeout(girar, 800);
+    let turboAtivo = false;
+let intervaloTurbo;
+let girosRestantes = 0;
+
+function turbo() {
+  const qtdeInput = parseInt(document.getElementById('qtdeTurbo').value);
+
+  if (!turboAtivo) {
+    turboAtivo = true;
+
+    if (!isNaN(qtdeInput) && qtdeInput > 0) {
+      // Turbo com número fixo de giros
+      girosRestantes = qtdeInput;
+      document.getElementById('mensagem').innerText = `Turbo: ${girosRestantes} giros`;
+
+      intervaloTurbo = setInterval(() => {
+        if (girosRestantes > 0 && saldo > 0) {
+          girar();
+          girosRestantes--;
+        } else {
+          clearInterval(intervaloTurbo);
+          turboAtivo = false;
+          document.getElementById('mensagem').innerText = 'Turbo finalizado';
+        }
+      }, 300);
+    } else {
+      // Turbo infinito
+      document.getElementById('mensagem').innerText = 'Turbo contínuo ativado';
+      intervaloTurbo = setInterval(() => {
+        if (saldo > 0) {
+          girar();
+        } else {
+          turbo(); // desativa se saldo zerar
+        }
+      }, 300);
     }
+
+  } else {
+    // Parar o turbo
+    turboAtivo = false;
+    clearInterval(intervaloTurbo);
+    document.getElementById('mensagem').innerText = 'Turbo desativado';
+  }
+}
 
     function modoAuto() {
       if (!auto) {
@@ -171,6 +217,18 @@
       if (auto && saldo > 0) {
         girar();
         setTimeout(autoGirar, 1000);
+
+        function depositar() {
+  if (saldo < 10) {
+    saldo = 10;
+    atualizarInterface();
+    localStorage.setItem('saldo', saldo);
+    document.getElementById('mensagem').innerText = 'Depósito de R$10 realizado com sucesso!';
+  } else {
+    document.getElementById('mensagem').innerText = 'Você já tem R$10 ou mais!';
+  }
+        }
+        
       }
     }
 
