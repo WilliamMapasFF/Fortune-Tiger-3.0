@@ -92,13 +92,13 @@
     <div class="painel">
       <div>Saldo: <span id="saldo">R$ 10,00</span></div>
       <div>Aposta: R$ <input type="number" id="aposta" value="0.50" step="0.10" min="0.10" style="width: 70px;"></div>
-      <div>Deposito: R$ <input type="number" id="inputDeposito" value="10.00" step="0.01" min="0"></div>
+      <div>Deposito: R$ <input type="number" id="inputDeposito" value="10.00" step="0.01" min="0" style="width: 70px;"></div>
+      <div><button class="button" onclick="depositar()">OK</button></div>
       <div>Ganho: <span id="ganho">R$ 0,00</span></div>
     </div>
   
     <div class="painel">
       <button class="button" onclick="girar()">Girar</button>
-      <button class="button" onclick="depositar()">OK</button>
       <input type="number" id="qtdeTurbo" placeholder="Qtd giros turbo" style="width: 120px; padding: 5px;">
       <button class="button" onclick="turbo()">Turbo</button>
       <button class="button" onclick="modoAuto()">Auto</button>
